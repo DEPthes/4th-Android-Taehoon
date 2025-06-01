@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <!-- 수동 영화 추가 섹션 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="영화 수동 추가"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/et_rank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="순위 (예: 1)"
+        android:inputType="number"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/et_movie_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="영화 이름"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/et_open_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="개봉일 (예: 2024-01-01)"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/et_audience_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="누적 관객 수"
+        android:inputType="number"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btn_add_movie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="영화 추가"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 박스오피스 가져오기 섹션 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="박스오피스 데이터 가져오기"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/et_target_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="조회 날짜 (YYYYMMDD 형식, 예: 20240101)"
+        android:inputType="number"
+        android:maxLength="8"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btn_fetch_box_office"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="박스오피스 가져오기"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btn_clear_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="목록 초기화"
+            android:layout_marginStart="4dp" />
+
+    </LinearLayout>
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 영화 목록 섹션 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="영화 목록"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>
