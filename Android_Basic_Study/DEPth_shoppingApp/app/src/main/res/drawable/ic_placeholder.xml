@@ -1,0 +1,38 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- 배경 -->
+    <path
+        android:fillColor="#F8F9FA"
+        android:pathData="M0,0h120v120h-120z"/>
+
+    <!-- 이미지 프레임 -->
+    <path
+        android:fillColor="#E9ECEF"
+        android:strokeColor="#DEE2E6"
+        android:strokeWidth="1"
+        android:pathData="M29,25h62c2.2,0 4,1.8 4,4v42c0,2.2 -1.8,4 -4,4h-62c-2.2,0 -4,-1.8 -4,-4v-42c0,-2.2 1.8,-4 4,-4z"/>
+
+    <!-- 이미지 아이콘 -->
+    <path
+        android:fillColor="#ADB5BD"
+        android:pathData="M45,40m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0"/>
+
+    <!-- 산 모양 -->
+    <path
+        android:fillColor="#CED4DA"
+        android:pathData="M25,65l15,-15l10,8l15,-13l20,20v10h-60z"/>
+
+    <!-- 로딩 텍스트 표시 -->
+    <path
+        android:fillColor="#E9ECEF"
+        android:pathData="M34,85h56c2.2,0 4,1.8 4,4v0c0,2.2 -1.8,4 -4,4h-56c-2.2,0 -4,-1.8 -4,-4v0c0,-2.2 1.8,-4 4,-4z"/>
+
+    <path
+        android:fillColor="#E9ECEF"
+        android:pathData="M34,98h36c2.2,0 4,1.8 4,4v0c0,2.2 -1.8,4 -4,4h-36c-2.2,0 -4,-1.8 -4,-4v0c0,-2.2 1.8,-4 4,-4z"/>
+
+</vector>

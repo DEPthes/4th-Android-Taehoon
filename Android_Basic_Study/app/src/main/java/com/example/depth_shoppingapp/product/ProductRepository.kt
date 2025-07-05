@@ -15,4 +15,10 @@ interface ProductRepository {
         onSuccess: (List<ProductDTO>) -> Unit,
         onError: (String) -> Unit
     )
+
+    fun getProductById(
+        productId: Int,
+        onSuccess: (ProductDetailDTO) -> Unit,
+        onError: (String) -> Unit
+    )
 }
