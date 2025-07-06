@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.depth_shoppingapp.databinding.FragmentHomeBinding
@@ -124,12 +125,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun onProductClick(product: ProductDTO) {
-        // DetailFragment로 이동하는 코드 (나중에 구현)
-        Toast.makeText(requireContext(), "${product.title} 클릭됨", Toast.LENGTH_SHORT).show()
-
-        // 예시: Navigation Component 사용 시
-        // val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(product.id)
-        // findNavController().navigate(action)
+        // ProductDetailFragment로 이동
+        val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(product.id)
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {

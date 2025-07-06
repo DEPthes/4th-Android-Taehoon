@@ -65,4 +65,31 @@ class ProductRepositoryImpl : ProductRepository {
             }
         })
     }
+
+    override fun getProductById(
+        productId: Int,
+        onSuccess: (ProductDetailDTO) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val call = service.getProductById(productId)
+        call.enqueue(object : Callback<ProductDetailResponseDTO> {
+            override fun onResponse(call: Call<ProductDetailResponseDTO>, response: Response<ProductDetailResponseDTO>) {
+                if (response.isSuccessful) {
+                    val productDetailResponse = response.body()
+                    if (productDetailResponse != null) {
+                        val productDetail = productDetailResponse.toProductDetail()
+                        onSuccess(productDetail)
+                    } else {
+                        onError("상품 정보를 찾을 수 없습니다.")
+                    }
+                } else {
+                    onError("서버 오류: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ProductDetailResponseDTO>, t: Throwable) {
+                onError("네트워크 오류: ${t.message}")
+            }
+        })
+    }
 }

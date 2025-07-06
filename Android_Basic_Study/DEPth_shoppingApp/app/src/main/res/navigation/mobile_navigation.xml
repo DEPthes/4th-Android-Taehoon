@@ -9,17 +9,41 @@
         android:id="@+id/nav_home"
         android:name="com.example.depth_shoppingapp.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.example.depth_shoppingapp.ui.detail.ProductDetailFragment"
+        android:label="상품 상세"
+        tools:layout="@layout/fragment_product_detail">
+
+        <argument
+            android:name="productId"
+            app:argType="integer" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/nav_search"
         android:name="com.example.depth_shoppingapp.ui.search.SearchFragment"
         android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search">
+
+        <action
+            android:id="@+id/action_searchFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/nav_mybag"
         android:name="com.example.depth_shoppingapp.ui.myBag.MyBagFragment"
         android:label="@string/title_mybag"
-        tools:layout="@layout/fragment_mybag" />
+        tools:layout="@layout/fragment_my_bag" />
 </navigation>
