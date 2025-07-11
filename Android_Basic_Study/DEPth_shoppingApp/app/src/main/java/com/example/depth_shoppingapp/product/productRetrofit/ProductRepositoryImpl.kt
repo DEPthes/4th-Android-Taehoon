@@ -1,5 +1,9 @@
-package com.example.depth_shoppingapp.product
+package com.example.depth_shoppingapp.product.productRetrofit
 
+import com.example.depth_shoppingapp.product.productDTO.ProductDTO
+import com.example.depth_shoppingapp.product.productDTO.ProductDetailDTO
+import com.example.depth_shoppingapp.product.productDTO.ProductDetailResponseDTO
+import com.example.depth_shoppingapp.product.productDTO.ProductResponseDTO
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -1,5 +1,7 @@
-package com.example.depth_shoppingapp.product
+package com.example.depth_shoppingapp.product.productRetrofit
 
+import com.example.depth_shoppingapp.product.productDTO.ProductDetailResponseDTO
+import com.example.depth_shoppingapp.product.productDTO.ProductResponseDTO
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

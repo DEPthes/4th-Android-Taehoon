@@ -1,4 +1,7 @@
-package com.example.depth_shoppingapp.product
+package com.example.depth_shoppingapp.product.productDTO
+
+import com.example.depth_shoppingapp.product.productDTO.ProductDTO
+import com.example.depth_shoppingapp.product.productDTO.ApiProduct
 
 data class ProductResponseDTO(
     val products: List<ApiProduct>,

@@ -90,9 +90,9 @@
         <option value="Kotlin Object" />
         <option value="Kotlin Data Class" />
         <option value="Kotlin Interface" />
-        <option value="Kotlin Class" />
         <option value="layoutResourceFile" />
         <option value="resourceFile" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -130,9 +130,10 @@
   <component name="RecentsManager">
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
       <recent name="com.example.depth_shoppingapp.ui.myBag" />
-      <recent name="com.example.depth_shoppingapp.ui.detail" />
-      <recent name="com.example.depth_shoppingapp.ui.home" />
-      <recent name="com.example.depth_shoppingapp.product" />
+      <recent name="com.example.depth_shoppingapp.product.productRetrofit" />
+      <recent name="com.example.depth_shoppingapp.ui.productDetail" />
+      <recent name="com.example.depth_shoppingapp.product.productDTO" />
+      <recent name="com.example.depth_shoppingapp.DB" />
     </key>
   </component>
   <component name="RunManager">
@@ -239,6 +240,15 @@
           <line>10</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-function">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/depth_shoppingapp/ui/search/SearchFragment.kt</url>
+          <line>17</line>
+          <properties class="com.example.depth_shoppingapp.ui.search.SearchFragment" method="&lt;init&gt;">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
@@ -247,12 +257,12 @@
       <map>
         <entry key="com.example.depth_shoppingapp">
           <value>
-            <CheckInfo lastCheckTimestamp="1751701658629" />
+            <CheckInfo lastCheckTimestamp="1752219780139" />
           </value>
         </entry>
         <entry key="com.example.depth_shoppingapp.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1751701658629" />
+            <CheckInfo lastCheckTimestamp="1752219780139" />
           </value>
         </entry>
       </map>

@@ -1,4 +1,4 @@
-./<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -22,13 +22,13 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="뒤로가기" />
+            android:contentDescription="@string/just_back" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="장바구니"
+            android:text="@string/title_mybag"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/black"
@@ -38,7 +38,7 @@
             android:id="@+id/btnSelectAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="전체선택"
+            android:text="@string/my_bag_all_choose"
             android:textSize="12sp"
             android:background="@drawable/btn_outline"
             android:textColor="@color/black"
@@ -61,7 +61,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="페이지 1 / 1"
+            android:text="@string/my_bag_page_count"
             android:textSize="14sp"
             android:textColor="@color/gray_600" />
 
@@ -69,7 +69,7 @@
             android:id="@+id/btnPrevPage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="이전"
+            android:text="@string/just_prev"
             android:textSize="12sp"
             android:background="@drawable/btn_outline"
             android:textColor="@color/black"
@@ -81,7 +81,7 @@
             android:id="@+id/btnNextPage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="다음"
+            android:text="@string/just_next"
             android:textSize="12sp"
             android:background="@drawable/btn_outline"
             android:textColor="@color/black"
@@ -114,7 +114,6 @@
             android:id="@+id/tvTotalPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="총 금액: ₩0"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/black"
@@ -125,7 +124,7 @@
             android:id="@+id/btnOrder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="주문하기"
+            android:text="@string/my_bag_order"
             android:textSize="16sp"
             android:textStyle="bold"
             android:background="@drawable/btn_primary"

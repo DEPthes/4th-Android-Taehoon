@@ -34,7 +34,5 @@ interface CartDAO {
     @Query("SELECT COUNT(*) FROM cart_items")
     fun getCartItemCount(): Flow<Int>
 
-    @Query("SELECT * FROM cart_items ORDER BY addedAt DESC LIMIT :limit OFFSET :offset")
-    suspend fun getCartItemsPaged(offset: Int, limit: Int): List<CartItem>
 
 }

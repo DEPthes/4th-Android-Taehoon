@@ -6,26 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.depth_shoppingapp.databinding.FragmentHomeBinding
-import com.example.depth_shoppingapp.product.ProductDTO
-import com.example.depth_shoppingapp.product.ProductRepository
-import com.example.depth_shoppingapp.product.ProductRepositoryImpl
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var productRepository: ProductRepository
+    private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var productAdapter: HomeViewAdapter
-
-    private var currentPage = 0
-    private val pageSize = 20
-    private var isLoading = false
-    private var hasMoreData = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,18 +33,13 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initRepositories()
         initRecyclerView()
-        loadProducts()
-    }
-
-    private fun initRepositories() {
-        productRepository = ProductRepositoryImpl()
+        observeViewModel()
     }
 
     private fun initRecyclerView() {
         productAdapter = HomeViewAdapter { product ->
-            onProductClick(product)
+            homeViewModel.onProductClick(product.id)
         }
 
         val layoutManager = GridLayoutManager(requireContext(), 2)
@@ -64,12 +53,12 @@ class HomeFragment : Fragment() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
 
-                    if (!isLoading && hasMoreData) {
+                    if (homeViewModel.canLoadMore()) {
                         val totalItemCount = layoutManager.itemCount
                         val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
                         if (lastVisibleItem >= totalItemCount - 5) {
-                            loadMoreProducts()
+                            homeViewModel.loadMoreProducts()
                         }
                     }
                 }
@@ -77,57 +66,34 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun loadProducts() {
-        if (isLoading) return
+    private fun observeViewModel() {
+        // 상품 리스트 관찰
+        homeViewModel.products.observe(viewLifecycleOwner, Observer { products ->
+            productAdapter.updateProducts(products)
+        })
 
-        isLoading = true
-        currentPage = 0
+        // 로딩 상태 관찰
+        homeViewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
+            // 로딩 UI 업데이트 (프로그레스바 등)
+            // binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        })
 
-        productRepository.getAllProducts(
-            limit = pageSize,
-            skip = currentPage * pageSize,
-            onSuccess = { products ->
-                isLoading = false
-                hasMoreData = products.size == pageSize
-                productAdapter.updateProducts(products)
-                currentPage++
-            },
-            onError = { error ->
-                isLoading = false
-                Toast.makeText(requireContext(), "상품 로드 실패: $error", Toast.LENGTH_SHORT).show()
+        // 에러 메시지 관찰
+        homeViewModel.error.observe(viewLifecycleOwner, Observer { error ->
+            error?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                homeViewModel.clearError()
             }
-        )
-    }
+        })
 
-    private fun loadMoreProducts() {
-        if (isLoading || !hasMoreData) return
-
-        isLoading = true
-
-        productRepository.getAllProducts(
-            limit = pageSize,
-            skip = currentPage * pageSize,
-            onSuccess = { products ->
-                isLoading = false
-                if (products.isEmpty()) {
-                    hasMoreData = false
-                } else {
-                    hasMoreData = products.size == pageSize
-                    productAdapter.addProducts(products)
-                    currentPage++
-                }
-            },
-            onError = { error ->
-                isLoading = false
-                Toast.makeText(requireContext(), "추가 상품 로드 실패: $error", Toast.LENGTH_SHORT).show()
+        // 상품 상세 페이지 이동 관찰
+        homeViewModel.navigateToProductDetail.observe(viewLifecycleOwner, Observer { productId ->
+            productId?.let {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(it)
+                findNavController().navigate(action)
+                homeViewModel.onProductDetailNavigated()
             }
-        )
-    }
-
-    private fun onProductClick(product: ProductDTO) {
-        // ProductDetailFragment로 이동
-        val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(product.id)
-        findNavController().navigate(action)
+        })
     }
 
     override fun onDestroyView() {

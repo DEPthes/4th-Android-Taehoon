@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/productDetailFragment"
-        android:name="com.example.depth_shoppingapp.ui.detail.ProductDetailFragment"
+        android:name="com.example.depth_shoppingapp.ui.productDetail.ProductDetailFragment"
         android:label="상품 상세"
         tools:layout="@layout/fragment_product_detail">
 

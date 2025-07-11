@@ -7,15 +7,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.depth_shoppingapp.DB.CartItem
+import com.example.depth_shoppingapp.R
 import com.example.depth_shoppingapp.databinding.ItemMyBagBinding
 
 class MyBagAdapter(
     private val onQuantityChanged: (CartItem, Int) -> Unit,
     private val onDeleteClicked: (CartItem) -> Unit,
-    private val onSelectionChanged: () -> Unit
+    private val onSelectionChanged: (Int) -> Unit
 ) : ListAdapter<CartItem, MyBagAdapter.MyBagViewHolder>(CartItemDiffCallback()) {
 
-    private val selectedItems = mutableSetOf<Int>()
+    private var selectedItems = setOf<Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyBagViewHolder {
         val binding = ItemMyBagBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,18 +27,29 @@ class MyBagAdapter(
         holder.bind(getItem(position))
     }
 
-    fun getSelectedItems(): List<CartItem> {
-        return currentList.filter { selectedItems.contains(it.productId) }
+    fun updateSelectedItems(selectedIds: Set<Int>) {
+        val oldSelectedItems = selectedItems
+        selectedItems = selectedIds
+
+        // 변경된 아이템만 업데이트
+        currentList.forEachIndexed { index, cartItem ->
+            val wasSelected = oldSelectedItems.contains(cartItem.productId)
+            val isSelected = selectedIds.contains(cartItem.productId)
+
+            if (wasSelected != isSelected) {
+                notifyItemChanged(index, "selection_change")
+            }
+        }
     }
 
-    fun toggleSelectAll() {
-        if (selectedItems.size == currentList.size) {
-            selectedItems.clear()
+    override fun onBindViewHolder(holder: MyBagViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty() && payloads.contains("selection_change")) {
+            // 선택 상태만 업데이트
+            holder.updateSelectionState(getItem(position))
         } else {
-            selectedItems.clear()
-            selectedItems.addAll(currentList.map { it.productId })
+            // 전체 바인딩
+            holder.bind(getItem(position))
         }
-        notifyDataSetChanged()
     }
 
     inner class MyBagViewHolder(private val binding: ItemMyBagBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -46,7 +58,7 @@ class MyBagAdapter(
             binding.apply {
                 // 상품 정보 바인딩
                 tvProductTitle.text = cartItem.title
-                tvProductPrice.text = "₩${String.format("%,d", cartItem.price)}"
+                tvProductPrice.text = root.context.getString(R.string.product_price_format, String.format("%,d", cartItem.price))
                 tvQuantity.text = cartItem.quantity.toString()
 
                 // 이미지 로드
@@ -55,21 +67,33 @@ class MyBagAdapter(
                     .centerCrop()
                     .into(ivProductImage)
 
-                // 체크박스 상태 설정
-                cbSelect.isChecked = selectedItems.contains(cartItem.productId)
-
                 // 총 가격 계산
                 val totalPrice = cartItem.price * cartItem.quantity
-                tvTotalPrice.text = "합계: ₩${String.format("%,d", totalPrice)}"
+                tvTotalPrice.text = root.context.getString(R.string.my_bag_total_format, String.format("%,d", totalPrice))
 
+                // 선택 상태 업데이트
+                updateSelectionState(cartItem)
+
+                // 클릭 리스너 설정
+                setupClickListeners(cartItem)
+            }
+        }
+
+        fun updateSelectionState(cartItem: CartItem) {
+            binding.cbSelect.setOnCheckedChangeListener(null) // 리스너 제거
+            binding.cbSelect.isChecked = selectedItems.contains(cartItem.productId)
+
+            // 리스너 재설정
+            binding.cbSelect.setOnCheckedChangeListener { _, _ ->
+                onSelectionChanged(cartItem.productId)
+            }
+        }
+
+        private fun setupClickListeners(cartItem: CartItem) {
+            binding.apply {
                 // 체크박스 클릭 리스너
-                cbSelect.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        selectedItems.add(cartItem.productId)
-                    } else {
-                        selectedItems.remove(cartItem.productId)
-                    }
-                    onSelectionChanged()
+                cbSelect.setOnCheckedChangeListener { _, _ ->
+                    onSelectionChanged(cartItem.productId)
                 }
 
                 // 수량 증가 버튼

@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.depth_shoppingapp.R
-import com.example.depth_shoppingapp.product.ProductDTO
+import com.example.depth_shoppingapp.product.productDTO.ProductDTO
 
 class HomeViewAdapter(
     private val onItemClick: (ProductDTO) -> Unit
@@ -35,8 +35,11 @@ class HomeViewAdapter(
 
         // 상품 정보 바인딩
         holder.productTitle.text = product.title
-        holder.productPrice.text = "₩${String.format("%,d", product.price)}"
-        holder.productRating.text = "★"
+        holder.productPrice.text = holder.itemView.context.getString(
+            R.string.product_price_format,
+            String.format("%,d", product.price)
+        )
+        holder.productRating.text = holder.itemView.context.getString(R.string.product_rating_star)
         holder.productScore.text = product.rating.toString()
 
         // 썸네일 이미지 로드 (Glide 사용)
@@ -56,22 +59,10 @@ class HomeViewAdapter(
         return products.size
     }
 
-    // 상품 목록 업데이트
+    // 상품 목록 업데이트 (ViewModel에서 전체 리스트를 받음)
     fun updateProducts(newProducts: List<ProductDTO>) {
         products.clear()
         products.addAll(newProducts)
         notifyDataSetChanged()
-    }
-
-    // 상품 추가 (무한스크롤용)
-    fun addProducts(newProducts: List<ProductDTO>) {
-        val startPosition = products.size
-        products.addAll(newProducts)
-        notifyItemRangeInserted(startPosition, newProducts.size)
-    }
-
-    // 현재 상품 개수
-    fun getCurrentItemCount(): Int {
-        return products.size
     }
 }

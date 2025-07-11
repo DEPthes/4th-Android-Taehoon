@@ -3,4 +3,64 @@
     <string name="title_home">홈</string>
     <string name="title_search">검색</string>
     <string name="title_mybag">장바구니</string>
+
+    <string name="my_bag_order">주문하기</string>
+    <string name="just_next">다음</string>
+    <string name="just_prev">이전</string>
+    <string name="just_back">돌아가기</string>
+    <string name="my_bag_all_choose">모두 선택</string>
+    <string name="my_bag_page_count">페이지 1/1</string>
+
+    <string name="title_product_detail">상품 상세</string>
+    <string name="product_description">상품 설명</string>
+    <string name="product_detail_in_my_bag">장바구니에 담기</string>
+
+    <string name="search_hint">상품명을 입력하세요</string>
+    <string name="cant_find_product_information">상품 정보 로드 실패 : </string>
+
+    <string name="product_load_error">상품 로드 실패: %s</string>
+    <string name="product_load_more_error">추가 상품 로드 실패: %s</string>
+    <string name="product_price_format">₩%s</string>
+    <string name="product_rating_star">★</string>
+
+    <!-- MyBag related strings -->
+    <string name="my_bag_total_price">총 가격</string>
+    <string name="my_bag_total_format">합계: ₩%s</string>
+    <string name="my_bag_processing">처리중...</string>
+    <string name="my_bag_page_info">페이지 %d / %d</string>
+    <string name="my_bag_total_amount">총 금액: ₩%s</string>
+    <string name="my_bag_delete_title">상품 삭제</string>
+    <string name="my_bag_delete_message">\'%s\'을(를) 장바구니에서 삭제하시겠습니까?</string>
+    <string name="my_bag_delete_confirm">삭제</string>
+    <string name="my_bag_delete_cancel">취소</string>
+    <string name="my_bag_order_confirm_title">주문 확인</string>
+    <string name="my_bag_order_confirm_message">총 %d개 상품\n총 금액: ₩%s\n\n주문하시겠습니까?</string>
+    <string name="my_bag_order_confirm">주문하기</string>
+    <string name="my_bag_order_cancel">취소</string>
+    <string name="my_bag_order_complete">주문이 완료되었습니다!</string>
+    <string name="my_bag_select_items">주문할 상품을 선택해주세요.</string>
+    <string name="my_bag_cart_loading_failed">장바구니 로딩 실패: %s</string>
+    <string name="my_bag_max_quantity">최대 수량은 %d개입니다.</string>
+    <string name="my_bag_quantity_update_failed">수량 업데이트 실패: %s</string>
+    <string name="my_bag_item_deleted">상품이 삭제되었습니다.</string>
+    <string name="my_bag_delete_failed">삭제 실패: %s</string>
+    <string name="my_bag_order_failed">주문 처리 실패: %s</string>
+
+    <!-- Product Detail related strings -->
+    <string name="product_detail_loading_failed">상품 정보 로드 실패: %s</string>
+    <string name="product_detail_out_of_stock">재고가 부족합니다.</string>
+    <string name="product_detail_added_to_cart">장바구니에 추가되었습니다.</string>
+    <string name="product_detail_add_to_cart_failed">장바구니 추가 실패: %s</string>
+    <string name="product_detail_brand">브랜드: %s</string>
+    <string name="product_detail_category">카테고리: %s</string>
+    <string name="product_detail_stock">재고: %d개</string>
+    <string name="product_detail_rating">★ %s</string>
+    <string name="product_detail_image_count">%d/%d</string>
+
+    <!-- Search related strings -->
+    <string name="search_enter_query">검색어를 입력해주세요.</string>
+    <string name="search_no_results">검색 결과가 없습니다.</string>
+    <string name="search_found_products">%d개 상품을 찾았습니다.</string>
+    <string name="search_failed">검색 실패: %s</string>
+    <string name="search_load_more_failed">추가 검색 결과 로드 실패: %s</string>
 </resources>

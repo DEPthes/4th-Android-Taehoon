@@ -1,4 +1,4 @@
-package com.example.depth_shoppingapp.product
+package com.example.depth_shoppingapp.product.productRetrofit
 
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit

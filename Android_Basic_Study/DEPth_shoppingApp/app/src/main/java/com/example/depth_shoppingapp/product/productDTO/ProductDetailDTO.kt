@@ -1,4 +1,4 @@
-package com.example.depth_shoppingapp.product
+package com.example.depth_shoppingapp.product.productDTO
 
 data class ProductDetailDTO(
     val id: Int,

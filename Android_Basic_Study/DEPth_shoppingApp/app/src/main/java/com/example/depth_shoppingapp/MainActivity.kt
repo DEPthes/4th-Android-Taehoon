@@ -12,10 +12,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.depth_shoppingapp.databinding.ActivityMainBinding
-import com.example.depth_shoppingapp.product.ProductGetApiService
-import com.example.depth_shoppingapp.product.ProductRepository
-import com.example.depth_shoppingapp.product.ProductRepositoryImpl
-import com.example.depth_shoppingapp.product.RetrofitClient
+import com.example.depth_shoppingapp.product.productRetrofit.ProductGetApiService
+import com.example.depth_shoppingapp.product.productRetrofit.ProductRepository
+import com.example.depth_shoppingapp.product.productRetrofit.ProductRepositoryImpl
+import com.example.depth_shoppingapp.product.productRetrofit.RetrofitClient
 import com.example.depth_shoppingapp.ui.home.HomeFragment
 
 class MainActivity : AppCompatActivity() {

@@ -1,4 +1,7 @@
-package com.example.depth_shoppingapp.product
+package com.example.depth_shoppingapp.product.productRetrofit
+
+import com.example.depth_shoppingapp.product.productDTO.ProductDTO
+import com.example.depth_shoppingapp.product.productDTO.ProductDetailDTO
 
 interface ProductRepository {
     fun searchProducts(

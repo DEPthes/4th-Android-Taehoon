@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:text="₩0"
                 android:textSize="14sp"
-                android:textColor="@color/primary"
+                android:textColor="@color/red"
                 android:layout_marginTop="4dp" />
 
             <TextView

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.detail.ProductDetailFragment">
+    tools:context=".ui.productDetail.ProductDetailFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                 android:src="@drawable/ic_arrow_back"
                 android:layout_gravity="right"
                 android:layout_marginRight="20dp"
-                android:contentDescription="뒤로가기" />
+                android:contentDescription="@string/just_back" />
 
         </com.google.android.material.appbar.MaterialToolbar>
 
@@ -162,7 +162,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="상품 설명"
+                    android:text="@string/product_description"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black" />
@@ -194,7 +194,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="70dp"
-        android:text="장바구니에 담기"
+        android:text="@string/product_detail_in_my_bag"
         android:textSize="16sp"
         android:textStyle="bold"
         app:cornerRadius="8dp"

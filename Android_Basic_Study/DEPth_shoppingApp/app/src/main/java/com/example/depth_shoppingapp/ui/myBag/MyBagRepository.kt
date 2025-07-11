@@ -29,16 +29,4 @@ class MyBagRepository(private val cartDao: CartDAO) {
     suspend fun deleteCartItem(cartItem: CartItem) {
         cartDao.deleteCartItemById(cartItem.productId)
     }
-
-    suspend fun clearCart() {
-        cartDao.clearCart()
-    }
-
-    fun getCartItemCount(): Flow<Int> {
-        return cartDao.getCartItemCount()
-    }
-
-    suspend fun getCartItemById(productId: Int): CartItem? {
-        return cartDao.getCartItemById(productId)
-    }
 }

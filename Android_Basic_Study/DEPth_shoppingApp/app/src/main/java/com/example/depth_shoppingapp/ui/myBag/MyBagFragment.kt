@@ -6,27 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.depth_shoppingapp.DB.AppDatabase
 import com.example.depth_shoppingapp.DB.CartItem
+import com.example.depth_shoppingapp.R
 import com.example.depth_shoppingapp.databinding.FragmentMyBagBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
 
 class MyBagFragment : Fragment() {
 
     private var _binding: FragmentMyBagBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var cartRepository: MyBagRepository
+    private lateinit var viewModel: MyBagViewModel
     private lateinit var cartAdapter: MyBagAdapter
-
-    private var currentPage = 0
-    private val itemsPerPage = 5
-    private var allCartItems = listOf<CartItem>()
-    private var isLoading = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,27 +39,30 @@ class MyBagFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initRepository()
+        initViewModel()
         setupRecyclerView()
         setupClickListeners()
-        observeCartItems()
+        observeViewModel()
     }
 
-    private fun initRepository() {
+    private fun initViewModel() {
         val database = AppDatabase.getInstance(requireContext())
-        cartRepository = MyBagRepository(database.cartDAO())
+        val repository = MyBagRepository(database.cartDAO())
+
+        val factory = MyBagViewModelFactory(repository, requireActivity().application)
+        viewModel = ViewModelProvider(this, factory)[MyBagViewModel::class.java]
     }
 
     private fun setupRecyclerView() {
         cartAdapter = MyBagAdapter(
             onQuantityChanged = { cartItem, newQuantity ->
-                updateQuantity(cartItem, newQuantity)
+                viewModel.updateQuantity(cartItem, newQuantity)
             },
             onDeleteClicked = { cartItem ->
-                deleteItem(cartItem)
+                showDeleteConfirmDialog(cartItem)
             },
-            onSelectionChanged = {
-                updateTotalPrice()
+            onSelectionChanged = { productId ->
+                viewModel.toggleItemSelection(productId)
             }
         )
 
@@ -76,115 +78,114 @@ class MyBagFragment : Fragment() {
         }
 
         binding.btnOrder.setOnClickListener {
-            processOrder()
+            showOrderConfirmDialog()
         }
 
         binding.btnSelectAll.setOnClickListener {
-            cartAdapter.toggleSelectAll()
-            updateTotalPrice()
+            viewModel.toggleSelectAll()
         }
 
         binding.btnNextPage.setOnClickListener {
-            loadNextPage()
+            viewModel.loadNextPage()
         }
 
         binding.btnPrevPage.setOnClickListener {
-            loadPrevPage()
+            viewModel.loadPrevPage()
         }
     }
 
-    private fun observeCartItems() {
+    private fun observeViewModel() {
+        // UI 상태 관찰
         lifecycleScope.launch {
-            cartRepository.getAllCartItems().collect { items ->
-                allCartItems = items
-                loadCurrentPage()
-                updatePageInfo()
-            }
-        }
-    }
+            viewModel.uiState.collectLatest { state ->
+                updateOrderProcessingState(state.isProcessingOrder)
 
-    private fun loadCurrentPage() {
-        val startIndex = currentPage * itemsPerPage
-        val endIndex = minOf(startIndex + itemsPerPage, allCartItems.size)
-        val pageItems = allCartItems.subList(startIndex, endIndex)
-
-        cartAdapter.submitList(pageItems)
-        updateTotalPrice()
-
-        // 페이지 버튼 활성화/비활성화
-        binding.btnPrevPage.isEnabled = currentPage > 0
-        binding.btnNextPage.isEnabled = endIndex < allCartItems.size
-    }
-
-    private fun loadNextPage() {
-        val totalPages = (allCartItems.size + itemsPerPage - 1) / itemsPerPage
-        if (currentPage < totalPages - 1) {
-            currentPage++
-            loadCurrentPage()
-            updatePageInfo()
-        }
-    }
-
-    private fun loadPrevPage() {
-        if (currentPage > 0) {
-            currentPage--
-            loadCurrentPage()
-            updatePageInfo()
-        }
-    }
-
-    private fun updatePageInfo() {
-        val totalPages = if (allCartItems.isEmpty()) 1 else (allCartItems.size + itemsPerPage - 1) / itemsPerPage
-        binding.tvPageInfo.text = "페이지 ${currentPage + 1} / $totalPages"
-    }
-
-    private fun updateQuantity(cartItem: CartItem, newQuantity: Int) {
-        if (newQuantity <= 0) {
-            deleteItem(cartItem)
-            return
-        }
-
-        lifecycleScope.launch {
-            try {
-                val updatedItem = cartItem.copy(quantity = newQuantity)
-                cartRepository.updateCartItem(updatedItem)
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "수량 업데이트 실패: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun deleteItem(cartItem: CartItem) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("상품 삭제")
-            .setMessage("'${cartItem.title}'을(를) 장바구니에서 삭제하시겠습니까?")
-            .setPositiveButton("삭제") { _, _ ->
-                lifecycleScope.launch {
-                    try {
-                        cartRepository.deleteCartItem(cartItem)
-                        Toast.makeText(requireContext(), "상품이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "삭제 실패: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
+                if (state.orderCompleted) {
+                    handleOrderCompleted()
                 }
             }
-            .setNegativeButton("취소", null)
+        }
+
+        // 현재 페이지 아이템 관찰
+        lifecycleScope.launch {
+            viewModel.currentPageItems.collectLatest { items ->
+                cartAdapter.submitList(items)
+            }
+        }
+
+        // 선택된 아이템 관찰
+        lifecycleScope.launch {
+            viewModel.selectedItems.collectLatest { selectedIds ->
+                cartAdapter.updateSelectedItems(selectedIds)
+            }
+        }
+
+        // 페이지 정보 관찰
+        lifecycleScope.launch {
+            viewModel.pageInfo.collectLatest { pageInfo ->
+                updatePageInfo(pageInfo)
+            }
+        }
+
+        // 총 가격 정보 관찰
+        lifecycleScope.launch {
+            viewModel.totalPrice.collectLatest { totalPriceInfo ->
+                updateTotalPriceDisplay(totalPriceInfo)
+            }
+        }
+
+        // 에러 메시지 관찰
+        viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
+            if (message.isNotEmpty()) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                viewModel.clearMessages()
+            }
+        }
+
+        // 성공 메시지 관찰
+        viewModel.successMessage.observe(viewLifecycleOwner) { message ->
+            if (message.isNotEmpty()) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                viewModel.clearMessages()
+            }
+        }
+    }
+
+    private fun updateOrderProcessingState(isProcessing: Boolean) {
+        binding.btnOrder.isEnabled = !isProcessing
+        binding.btnOrder.text = if (isProcessing) {
+            getString(R.string.my_bag_processing)
+        } else {
+            getString(R.string.my_bag_order)
+        }
+    }
+
+    private fun updatePageInfo(pageInfo: PageInfo) {
+        binding.tvPageInfo.text = getString(R.string.my_bag_page_info, pageInfo.currentPage, pageInfo.totalPages)
+        binding.btnPrevPage.isEnabled = pageInfo.hasPrevPage
+        binding.btnNextPage.isEnabled = pageInfo.hasNextPage
+    }
+
+    private fun updateTotalPriceDisplay(totalPriceInfo: TotalPriceInfo) {
+        binding.tvTotalPrice.text = getString(R.string.my_bag_total_amount, String.format("%,d", totalPriceInfo.totalAmount))
+        binding.btnOrder.isEnabled = totalPriceInfo.hasSelectedItems
+    }
+
+    private fun showDeleteConfirmDialog(cartItem: CartItem) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.my_bag_delete_title))
+            .setMessage(getString(R.string.my_bag_delete_message, cartItem.title))
+            .setPositiveButton(getString(R.string.my_bag_delete_confirm)) { _, _ ->
+                viewModel.deleteItem(cartItem)
+            }
+            .setNegativeButton(getString(R.string.my_bag_delete_cancel), null)
             .show()
     }
 
-    private fun updateTotalPrice() {
-        val selectedItems = cartAdapter.getSelectedItems()
-        val totalPrice = selectedItems.sumOf { it.price * it.quantity }
-        binding.tvTotalPrice.text = "총 금액: ₩${String.format("%,d", totalPrice)}"
-
-        // 선택된 항목이 있을 때만 주문 버튼 활성화
-        binding.btnOrder.isEnabled = selectedItems.isNotEmpty()
-    }
-
-    private fun processOrder() {
-        val selectedItems = cartAdapter.getSelectedItems()
+    private fun showOrderConfirmDialog() {
+        val selectedItems = viewModel.getSelectedItemsList()
         if (selectedItems.isEmpty()) {
-            Toast.makeText(requireContext(), "주문할 상품을 선택해주세요.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.my_bag_select_items), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -192,28 +193,19 @@ class MyBagFragment : Fragment() {
         val itemCount = selectedItems.size
 
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("주문 확인")
-            .setMessage("총 ${itemCount}개 상품\n총 금액: ₩${String.format("%,d", totalPrice)}\n\n주문하시겠습니까?")
-            .setPositiveButton("주문하기") { _, _ ->
-                lifecycleScope.launch {
-                    try {
-                        // 선택된 항목들을 DB에서 제거
-                        selectedItems.forEach { item ->
-                            cartRepository.deleteCartItem(item)
-                        }
-
-                        Toast.makeText(requireContext(), "주문이 완료되었습니다!", Toast.LENGTH_LONG).show()
-
-                        // 홈 화면으로 이동
-                        findNavController().popBackStack()
-
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "주문 처리 실패: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            .setTitle(getString(R.string.my_bag_order_confirm_title))
+            .setMessage(getString(R.string.my_bag_order_confirm_message, itemCount, String.format("%,d", totalPrice)))
+            .setPositiveButton(getString(R.string.my_bag_order_confirm)) { _, _ ->
+                viewModel.processOrder()
             }
-            .setNegativeButton("취소", null)
+            .setNegativeButton(getString(R.string.my_bag_order_cancel), null)
             .show()
+    }
+
+    private fun handleOrderCompleted() {
+        Toast.makeText(requireContext(), getString(R.string.my_bag_order_complete), Toast.LENGTH_LONG).show()
+        viewModel.resetOrderState()
+        findNavController().popBackStack()
     }
 
     override fun onDestroyView() {
